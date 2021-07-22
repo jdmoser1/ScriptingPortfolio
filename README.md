@@ -17,4 +17,4 @@ The scripts will generally have information embedded that is sensitive to the or
 If the redacted content was required to be unique, I added an integer; e.g. `REDACTEDNAME1`    
 
 ## To Do List
-- [ ] Contextual decriptions (2020-07-22) -- most scripts have a comment block for the technical explanation. If you don't know the context that the script was built in, it may be hard to understand why I made some design decisions, or some "quirks" that had to be worked with. 
+- [ ] Contextual decriptions (2020-07-22) -- most scripts have a comment block for the technical explanation. If you don't know the context that the script was built in, it may be hard to understand why I made some design decisions, or some "quirks" that had to be worked with. There is also cross script linking that isn't clear.
