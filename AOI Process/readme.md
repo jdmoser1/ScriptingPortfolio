@@ -14,4 +14,5 @@ I designed a PowerShell script (`LocalProc-VITArchive.ps1`) to run on each AOI c
 In order to support this configuration and maintain performance, we added a 50TB SAN, upgraded our tape drive to LTO6, and added solid state drives to the AOI computers. 
 
 ## Additional Info
-
+* `\scripts\` ~ Several scripts shared the same code base. Splitting off portions of code into individual scripts allowed for code recycling and (usually) simplified updates
+* `Procedure-ArchiveOmronAOI.ps1` ~ Another image conversion and cleanup script, which was for another AOI system. Scheduled nightly and used built in .Net code to convert from .`BMP` to `.JPG`
