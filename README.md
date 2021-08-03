@@ -16,6 +16,9 @@ The scripts will generally have information embedded that is sensitive to the or
 `REDACTEDSTRING` ~ usually a search or filter string  
 If the redacted content was required to be unique, I added an integer; e.g. `REDACTEDNAME1`    
 
-## To Do List
+## WIP List
 - [ ] Contextual decriptions (2020-07-22) for each script
+    - [x] AOI
+    - [ ] Nagios
+    - [ ] AD Scripts
 - [ ] Desktop Central Distribution Service deployment script.  
