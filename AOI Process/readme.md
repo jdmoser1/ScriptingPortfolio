@@ -15,4 +15,5 @@ In order to support this configuration and maintain performance, we added a 50TB
 
 ## Additional Info
 * `\scripts\` ~ Several scripts shared the same code base. Splitting off portions of code into individual scripts allowed for code recycling and (usually) simplified updates
-* `Procedure-ArchiveOmronAOI.ps1` ~ Another image conversion and cleanup script, which was for another AOI system. Scheduled nightly and used built in .Net code to convert from .`BMP` to `.JPG`
+* `Procedure-ArchiveOmronAOI.ps1` ~ Another image conversion and cleanup script, which was for another AOI system. Scheduled nightly and used built in .Net code to convert from `.BMP` to `.JPG`
+* `Tool-TransferVITAOI.ps1` ~ While the process above was being built out, images still had to be generated and saved somewhere. This script allowed me to manually go through an old folder structure and _incorporate_ previous images into a more consistent folder structure. 
