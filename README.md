@@ -18,7 +18,7 @@ If the redacted content was required to be unique, I added an integer; e.g. `RED
 
 ## WIP List
 - [ ] Contextual decriptions for each script
-    :heavy_check_mark: AOI
+    - [x] AOI
     - [ ] Nagios
-    :heavy_check_mark: AD Scripts
+    - [x] AD Scripts
 - [ ] Desktop Central Distribution Service deployment script.  
