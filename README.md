@@ -18,7 +18,6 @@ If the redacted content was required to be unique, I added an integer; e.g. `RED
 
 ## WIP List
 - [ ] Contextual decriptions for each script
-    - [x] AOI
     - [ ] Nagios
-    - [x] AD Scripts
-- [ ] Desktop Central Distribution Service deployment script.  
+    - [ ] Distribution service 
+- [x] Desktop Central Distribution Service deployment script.  
