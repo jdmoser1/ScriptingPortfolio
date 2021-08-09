@@ -20,4 +20,4 @@ If the redacted content was required to be unique, I added an integer; e.g. `RED
 - [ ] Contextual decriptions for each script
     - [ ] Nagios
     - [ ] Distribution service 
-- [x] Desktop Central Distribution Service deployment script.  
+ 

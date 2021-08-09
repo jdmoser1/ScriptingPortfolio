@@ -1,0 +1,3 @@
+# Microsoft 365 support scripts
+
+* `GetExchangeOnPremSettings.ps1` and `SetO365Changes.ps1` were written for a mail migration from Exchange 2010 to Microsoft 365. We had a vendor that incrementally exported our mailboxes and user metadata. However there were some key items that weren't geing replicated: users who had access to each shared mailbox; distribution groups including member lists and users who had "Send As" access; cases where one user has SendAs access to another user mailbox; and aliases from a legacy domain. The first script was written to export these items to a JSON file, while the second script imported them to Exchange Online. I picked JSON rather than CSV because of the ability to next objects. 
