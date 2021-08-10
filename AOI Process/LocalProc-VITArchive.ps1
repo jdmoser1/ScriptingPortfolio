@@ -11,44 +11,44 @@ Try {
     # Create new log
     $TimeStart = Get-Date
     $LogName = (Get-Item $MyInvocation.MyCommand.Path).BaseName
-    $LogFile = Join-Path -Path "REDACTEDPATH" -ChildPath ("Logs\" + $LogName + "-" + (Get-Date -Format yyyy-MM-dd-HHmmss) + ".log")
+    $LogFile = Join-Path -Path "C:\Sample" -ChildPath ("Logs\" + $LogName + "-" + (Get-Date -Format yyyy-MM-dd-HHmmss) + ".log")
     Start-Transcript -Path $LogFile 
     Write-Output -InputObject ("Log output for " + $LogName + " generated at " + $TimeStart + "`n")
     # Folder locations
     # The exact location for the local path isn't controlled by IT. It should always be a subfolder of this location
-    $VITAOILocalRoot = "REDACTEDPATH"
+    $VITAOILocalRoot = "C:\SampleImages"
     # Common path to OIS extractor executable 
-    $OISExtractorPath = "REDACTEDEXE"
+    $OISExtractorPath = "C:\Program\Sample.exe"
     # Folder Locations differ based on computer
     Switch ($Env:COMPUTERNAME) {
-        "REDACTEDNAME0" {
-            $MEID = 'REDACTEDNAME'
-            $VITAOIArchive = "REDACTEDPATH"
+        "Sample0" {
+            $MEID = 'Sample0'
+            $VITAOIArchive = "\\SampleServer\Sample0"
         }
-        "REDACTEDNAME1" {
-            $MEID = 'REDACTEDNAME'
-            $VITAOIArchive = "REDACTEDPATH"
+        "Sample1" {
+            $MEID = 'Sample1'
+            $VITAOIArchive = "\\SampleServer\Sample1"
         }
-        "REDACTEDNAME2" {
-            $MEID = 'REDACTEDNAME'
-            $VITAOIArchive = "REDACTEDPATH"
+        "Sample2" {
+            $MEID = 'Sample2'
+            $VITAOIArchive = "\\SampleServer\Sample2"
         }
-        "REDACTEDNAME3" {
-            $MEID = 'REDACTEDNAME'
-            $VITAOIArchive = "REDACTEDPATH"
+        "Sample3" {
+            $MEID = 'Sample3'
+            $VITAOIArchive = "\\SampleServer\Sample3"
         }
-        "REDACTEDNAME4" {
+        "Test" {
             $MEID = 'Test'
-            $VITAOILocalRoot = 'REDACTEDPATH'
+            $VITAOIArchive = "\\SampleServer\Test"
         }
         default {
             $MEID = 'Unknown'
-            $VITAOIArchive = 'REDACTEDPATH'
+            $VITAOIArchive = '\\SampleServer\Orphaned'
 
         }
     }
     # Path for 'problem' images
-    $VITAOIOrphaned = 'REDACTEDPATH'
+    $VITAOIOrphaned = '\\SampleServer\Orphaned'
     # Time to end 
     $VITAOIEnd = $TimeStart.AddMinutes(116)
     # Counter
@@ -61,7 +61,7 @@ Try {
     }
 
     # Connect to remote paths
-    & cmdkey /add:REDACTEDNAME /user:REDACTEDCRED /pass:REDACTEDCRED
+    & cmdkey /add:Sample /user:SampleUser /pass:SamplePass
 
     # Loop for until end of time period
     While ((Get-Date) -lt $VITAOIEnd) {
@@ -98,10 +98,10 @@ Try {
                             Remove-Item -Path $CurrentPath -Recurse
                             # Update SQL database with passing result (Powershell 2.0 Compatible)
                             $SQLConnection = New-Object System.Data.SqlClient.SqlConnection
-                            $SQLConnection.ConnectionString = "Data Source=REDACTEDNAME;Initial Catalog=REDACTEDNAME;uid=REDACTEDCRED;pwd=REDACTEDCRED"
+                            $SQLConnection.ConnectionString = "Data Source=SampleServer;Initial Catalog=SampleName;uid=SampleUser;pwd=SamplePass"
                             $SQLConnection.Open()
                             $SQLCommand = $SQLConnection.CreateCommand()
-                            $SQLCommand.CommandText = ("INSERT INTO REDACTEDNAME (Panel,TransferStatus,MEID) VALUES ('"+$_.Name+"',1,'$MEID')")
+                            $SQLCommand.CommandText = ("INSERT INTO SampleTable (Panel,TransferStatus,MEID) VALUES ('"+$_.Name+"',1,'$MEID')")
                             $SQLCommand.ExecuteReader()
                             $SQLConnection.Close()
                         } Else {
@@ -127,7 +127,7 @@ Try {
         # Notify the System Administrator of the error
         $MessageContent = ("Review the log " + $LogFile + " for more details.")
         $MessageSubject = ("Error: " + $LogName)
-        REDACTEDPATH\Scripts\SendNotification-r3.ps1 -MessageLevel "Warning" -MessageSubject $MessageSubject -MessageContent $MessageContent -ComputerName $env:COMPUTERNAME
+        C:\Sample\Scripts\SendNotification-r3.ps1 -MessageLevel "Warning" -MessageSubject $MessageSubject -MessageContent $MessageContent -ComputerName $env:COMPUTERNAME
     }
 } Catch {
     Write-Output -InputObject "*Permanent errors*"
@@ -135,10 +135,10 @@ Try {
     # Notify the System Administrator of the error
     $MessageContent = ("Review the log " + $LogFile + " for more details.")
     $MessageSubject = ("Error: " + $LogName)
-    REDACTEDPATH\Scripts\SendNotification-r3.ps1 -MessageLevel "Warning" -MessageSubject $MessageSubject -MessageContent $MessageContent -ComputerName $env:COMPUTERNAME
+    C:\Sample\Scripts\SendNotification-r3.ps1 -MessageLevel "Warning" -MessageSubject $MessageSubject -MessageContent $MessageContent -ComputerName $env:COMPUTERNAME
 } Finally {
     # unlink credentials
-    #& cmdkey /delete:safusot-14aoi01
+    #& cmdkey /delete:SampleServer
     # Get completion time for the script
     Write-Output -InputObject ("Log started at " + $TimeStart + "`n")
     Write-Output -InputObject ("Last logged entry at " + (Get-Date))

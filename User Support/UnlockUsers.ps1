@@ -16,7 +16,7 @@
 #>
 [CmdletBinding()]
 param (
-    [parameter(DontShow)][string]$BaseOU = 'REDACTEDOUPATH'
+    [parameter(DontShow)][string]$BaseOU = 'OU=Sample,DC=Sample,DC=ninja'
     , [pscredential]$Credential = (Get-Credential)
 )
 try {

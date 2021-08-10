@@ -1,5 +1,5 @@
 # Path to save output objects
-$JSONRoot = 'REDACTEDPATH'
+$JSONRoot = 'C:\Sample'
 $SharedMailPath = Join-Path -Path $JSONRoot -ChildPath 'SharedMailboxUsers.json'
 $DistroMemberPath = Join-Path -Path $JSONRoot -ChildPath 'DistroMembers.json'
 $AliasPath = Join-Path -Path $JSONRoot -ChildPath 'Aliases.json'
@@ -8,7 +8,7 @@ $SendAsUsersPath = Join-Path -Path $JSONRoot -ChildPath 'SendAsUsers.json'
 # "List" of access rights to add
 $AccessRight = 'FullAccess'
 # string  to add to identity to complete the UPN
-$AtSuffix = '@REDACTEDNAME'
+$AtSuffix = '@Sample.ninja'
 # "List" of access rights to add
 $SendAsRight = 'SendAs'
 

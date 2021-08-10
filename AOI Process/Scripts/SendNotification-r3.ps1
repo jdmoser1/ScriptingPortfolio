@@ -3,8 +3,8 @@ This script handles email notifications
 There are multiple levels, and notifications are handled differently based on level
 Some notification levels are not implemented, and are added to maintain consistency to the monitoring system levels
     1. Test - Justin only 
-    2. Warning - REDACTEDNAME mailbox
-    3. Severe  - SMS alerts, REDACTEDNAME distro and REDACTEDNAME
+    2. Warning - Sample mailbox
+    3. Severe  - SMS alerts, Sample distro and Sample mailbox
 Notification levels Information, Urgent, and Critical are not officially implemented.
 #>
 param(
@@ -18,37 +18,37 @@ param(
 # Set the recipient based on alert priority
 Switch ($MessageLevel) {
     "Test" { 
-        $Recipient = "REDACTEDEMAIL" 
+        $Recipient = "sample1@sample.ninja" 
     } 
     "Warning" {
-        $Recipient = "REDACTEDEMAIL" 
+        $Recipient = "sample2@sample.ninja" 
     }
     "Urgent" { 
-        $Recipient = "REDACTEDEMAIL" 
+        $Recipient = "sample3@sample.ninja" 
     }
     "Critical" {
         # SMS works best as plain text
-        $Recipient = "REDACTEDEMAIL"
+        $Recipient = "sample4@sample.ninja"
         $MessagePlainText = $True 
     }
     "WDPCritical" {
         # SMS works best as plain text
-        $Recipient = "REDACTEDEMAIL"
+        $Recipient = "sample5@sample.ninja"
         $MessagePlainText = $True
     }
     default {
-        $Recipient = "REDACTEDEMAIL" 
+        $Recipient = "sample1@sample.ninja" 
     }
 }
 # Sender address
-$Sender = "REDACTEDEMAIL"
+$Sender = "sample0@sample.ninja"
 # Message creation time
 $MessageTime = Get-Date
 
 # Build out the message and send it
 If ($MessagePlainText) {
     $MessageBody = $MessageContent
-    Send-MailMessage -From $Sender -To $Recipient -Subject $MessageSubject -Body $MessageBody -SmtpServer REDACTEDNAME
+    Send-MailMessage -From $Sender -To $Recipient -Subject $MessageSubject -Body $MessageBody -SmtpServer smtp.sample.ninja
 } Else { 
     $MessageBody = "
         <!doctype html>

@@ -9,10 +9,10 @@
 #>
 
 # Database server for Fourth Shift
-$DBServer = 'REDACTEDNAME'
-$Database = 'REDACTEDNAME'  
-$DBUsername = 'REDACTEDCRED'
-$DBPassword = 'REDACTEDCRED'
+$DBServer = 'SampleServer'
+$Database = 'Sample'  
+$DBUsername = 'SampleReadOnly'
+$DBPassword = 'SamplePass'
 # Date in yyyyMMdd format, and time in hhmmss
 $SQLJobCutoff = (Get-Date).AddMinutes(-120)
 $SQLJobDate = Get-Date -Date $SQLJobCutoff -Format yyyyMMdd

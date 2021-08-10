@@ -1,10 +1,10 @@
 ﻿<#
-    This procedure script handles these tasks for REDACTEDNAME:
+    This procedure script handles these tasks for SampleServer:
         1. Create JPEG copies of Omron bitmap files 
         2. Add the JPEGs to an archive based on the week of the year
         3. Delete files which "Expired" 
         4. Delete empty folders in the AOI folder structure
-    This must be ran on REDACTEDNAME
+    This must be ran on SampleServer
 #>
 
 # Create initial setup, run commands, and capture errors
@@ -26,14 +26,14 @@ Try {
     $ArchiveAOILast = Import-CliXML -Path $AOILastFile
     Write-Output -InputObject "Last Run Time: $ArchiveAOILast" 
     # AOI Image Folder Paths
-    $AOISource = "REDACTEDPATH" 
-    $AOIArchive = "REDACTEDPATH" 
+    $AOISource = "C:\Sample0" 
+    $AOIArchive = "D:\Sample1" 
     # Clean files based on last successful run
     $AOICutoff = $ArchiveAOILast.AddDays(-14)
 
     ## Run commands
     # Cycle through each AOI Image folder
-    Get-ChildItem -Path $AOISource | Where {($_.Name -like "REDACTEDSTRING*")} | ForEach-Object -Process {
+    Get-ChildItem -Path $AOISource | Where {($_.Name -like "Sample*")} | ForEach-Object -Process {
         # Source and destination paths
         $LineSource =  $_.FullName
         $LineArchive = Join-Path -Path $AOIArchive -ChildPath $_.Name

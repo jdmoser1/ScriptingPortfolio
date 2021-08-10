@@ -22,13 +22,13 @@ Try {
     $LogFile = Join-Path -Path PowerUtils:\Logs -ChildPath ($ProcedureName + '-' + (Get-Date -Format yyyy-MM-dd-HHmmss) + '.log')
     Start-Transcript -Path $LogFile -IncludeInvocationHeader
     # Distinguished names in AD to search for users
-    $ADOU = "REDACTEDOUPATH"
+    $ADOU = "OU=Sample,DC=Sample,DC=ninja"
     # Database server for Fourth Shift
-    $DBServer = 'REDACTEDNAME'
-    $Database = 'REDACTEDNAME'  
+    $DBServer = 'SampleServer'
+    $Database = 'Sample0'  
     # Message settings
-    $SMTPServer = "REDACTEDNAME"
-    $MessageSender = "REDACTEDEMAIL"
+    $SMTPServer = "Sample1"
+    $MessageSender = "sample@sample.ninja"
 
     ## Validate required modules
     If ('SqlServer' -notin (Get-Module -ListAvailable).Name) { Write-Warning -Message 'SqlServer module not found' }

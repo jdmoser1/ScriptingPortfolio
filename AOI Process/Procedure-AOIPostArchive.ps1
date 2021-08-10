@@ -1,6 +1,6 @@
 ﻿<#
     Template Version 2018-03-15
-    This procedure script handles these tasks for REDACTEDNAME:
+    This procedure script handles these tasks for SampleServer:
         1. Based on server ID, copy Veeam Archive Files to external disk
         2. Clean up archived files on originating server
     It's assumed that Veeam completed successfully. ToDo: integrate Veeam 
@@ -38,16 +38,16 @@ Try {
 
     # Veeam repository information
     $VeeamRepo = [PSCustomObject]@{
-        Source = Get-Item -Path 'REDACTEDPATH'
-        Destination = Get-Item -Path REDACTEDPATH
+        Source = Get-Item -Path 'C:\Backup'
+        Destination = Get-Item -Path 'D:\Backup'
         Filter = '*.vbk'
         Backups = [PSCustomObject]@{
                 NAS1 = [PSCustomObject]@{
-                    FileFilter = 'REDACTEDNAME*.vbk'
+                    FileFilter = 'Sample0*.vbk'
                     LastRun = $Null
                 }
                 AOI01 = [PSCustomObject]@{
-                    FileFilter = 'REDACTEDNAME*.vbk'
+                    FileFilter = 'Sample1*.vbk'
                     LastRun = $Null
                 }
             }
@@ -57,25 +57,25 @@ Try {
     # Paths to be processed
     $AOIGroups = [System.Collections.ArrayList]@(
         [PSCustomObject]@{
-            Name = 'REDACTEDNAME0'
-            PathMaster = Get-Item -Path 'REDACTEDNAME'
-            PathFilter = 'REDACTEDSTRING?'
+            Name = 'Sample0'
+            PathMaster = Get-Item -Path '\\SampleServer\Sample0'
+            PathFilter = 'Sample?'
             SearchDepth = 1
-            VeeamTarget = 'REDACTEDNAME'
+            VeeamTarget = 'Sample0'
         }
         , [PSCustomObject]@{
-            Name = 'REDACTEDNAME1'
-            PathMaster = Get-Item -Path 'REDACTEDNAME'
-            PathFilter = 'REDACTEDSTRING?'
+            Name = 'Sample1'
+            PathMaster = Get-Item -Path '\\SampleServer\Sample1'
+            PathFilter = 'Sample*'
             SearchDepth = 1
-            VeeamTarget = 'REDACTEDNAME'
+            VeeamTarget = 'Sample1'
         }
         , [PSCustomObject]@{
-            Name = 'REDACTEDNAME2'
-            PathMaster = Get-Item -Path 'REDACTEDNAME'
-            PathFilter = 'REDACTEDSTRING'
+            Name = 'Sample2'
+            PathMaster = Get-Item -Path '\\SampleServer\Sample2'
+            PathFilter = 'Sample'
             SearchDepth = 1
-            VeeamTarget = 'REDACTEDNAME'
+            VeeamTarget = 'Sample0'
         }
     )
 

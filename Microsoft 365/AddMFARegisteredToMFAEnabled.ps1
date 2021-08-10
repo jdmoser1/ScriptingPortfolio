@@ -1,8 +1,8 @@
 [CmdletBinding()]
 param (
     [pscredential]$DomainCredential = (Get-Credential)
-    , [parameter(DontShow)][string]$AllowGroup = 'REDACTEDNAME'
-    , [parameter(DontShow)][string]$DenyGroup = 'REDACTEDNAME'
+    , [parameter(DontShow)][string]$AllowGroup = 'Sample0'
+    , [parameter(DontShow)][string]$DenyGroup = 'Sample1'
 )
 if (-not (Get-MsolDomain -ErrorAction SilentlyContinue)) {
     Connect-MsolService

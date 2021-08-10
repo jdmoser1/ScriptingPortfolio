@@ -19,12 +19,12 @@ case "$1" in
 					1)
 						echo -n "Restarting Tomcat (2nd soft critical state)..."
 						# Call NSClient++ (by NRPE) to handle the restart 
-						/usr/local/nagios/libexec/check_nrpe -H REDACTEDIP -c handler_restart_tomcat
+						/usr/local/nagios/libexec/check_nrpe -H SampleIP -c handler_restart_tomcat
 						;;
 					3)
 						echo -n "Restarting Tomcat (2nd soft critical state)..."
 						# Call NSClient++ (by NRPE) to handle the restart 
-						/usr/local/nagios/libexec/check_nrpe -H REDACTEDIP -c handler_restart_tomcat
+						/usr/local/nagios/libexec/check_nrpe -H SampleIP -c handler_restart_tomcat
 						;;
 				esac
 				;;

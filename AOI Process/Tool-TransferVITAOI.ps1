@@ -14,12 +14,12 @@ Try {
     ## Initial setup
     $Error.Clear()
     # Create the PowerUtils drive at the Procedure path, and set as working directory
-    Set-Location -Path REDACTEDPATH
+    Set-Location -Path 'C:\Sample0'
     If ((Get-PSDrive) -match "PowerUtils") {
         Remove-PSDrive -Name "PowerUtils" 
     }
     # Allow input for current PowerUtils location (local drive is recommended), unless a parameter is set
-    $ProdPath = "REDACTEDPATH"
+    $ProdPath = "C:\Sample1"
     If (-not $AOIRoot -or -not $AOIArchive) {
         $InPath = Read-Host -Prompt "Enter the PowerUtils location [$ProdPath]" 
         # Default value
@@ -38,8 +38,8 @@ Try {
     Start-Transcript -Path $LogFile
     Write-Output -InputObject ("Log output for " + $LogName + " generated at " + $TimeStart + "`n")
     # Default paths. If parameter is not set, ask
-    $DefaultRoot = "REDACTEDPATH"
-    $DefaultArchive = "REDACTEDPATH"
+    $DefaultRoot = "C:\Sample2"
+    $DefaultArchive = "D:\Sample3"
     If (-not $AOIRoot) {
         Write-Warning -Message 'This tool cannot split archives in interactive mode'
         Write-Output -InputObject ("Root path for VIT AOI images [$DefaultRoot]")
@@ -58,7 +58,7 @@ Try {
     # Review path
     $VITReviewPath = Join-Path -Path $VITAOIRoot -ChildPath 'Orphaned'
     # VIT folder name check
-    $ExpectedMEString = 'REDACTEDSTRING*'
+    $ExpectedMEString = 'Sample*'
     # Counter
     $J = 0 
     # Upper limit, stop script at this increment
@@ -84,7 +84,7 @@ Try {
         $Error.Clear()
     }
 
-    # For VITAOI, Loop through each "REDACTEDNAME" folder
+    # For VITAOI, Loop through each "Sample" folder
     Get-ChildItem -Path $VITAOIRoot -Directory | Where-Object -Property FullName -Value $ExpectedMEString -Match | ForEach-Object -Process {
         # Terminate at JMax
         #If ($J -ge $JMax) {
