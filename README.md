@@ -7,8 +7,4 @@ Welcome to my portfolio! I am a System Engineer looking to showcase some of the 
 ## Redaction Notes  
 To protect those environments these scripts belong to, I redacted sensitive information. So for example, you may see a string in the format "C:\Sample\file.csv". If the string (folder path in this case) was set to correctly represent something in the environment, the script would run correctly.  
 
-## WIP List
-- [ ] Contextual decriptions for each script
-    - [ ] Nagios
-    - [ ] Distribution service 
-- [ ] Local Admin script 
+
