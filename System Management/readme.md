@@ -1,4 +1,0 @@
-# System Management
-
-* `SetLocalAdminChanges.ps1` and `LocalAdminChanges.json` ~ The script secures local accounts by disabling accounts except for an approved admin account, rename the Administrator account, and reset the password for both acounts. The passwords are encrytped in the JSON file. This allowed us to be complient to an audit finding until we could implement [LAPS](https://www.microsoft.com/en-us/download/details.aspx?id=46899)
-* `InstallDCDistribution.ps1` ~ we had 11 branch servers and wanted to set up distributed software management across our WAN. This script installed the distribution software and applied custom settings. 

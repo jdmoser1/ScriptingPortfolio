@@ -1,8 +1,0 @@
-# User Support
-
-* `Notification-PasswordExpiration.ps1`
-    * Depends on scripts not listed here (see _AOI Process/Scripts_)
-    * I built this script to generate an email to a user when their account account is expiring soon. It was schedule to run once every a day M-F. The script supported Active Directory accounts, and the accounts in our ERP software. It would also email the IT department if an account had already expired. This is helpful for support ticket planning. 
-* `UnlockUsers.ps1` 
-    * This script is one of my first attempts to consistently apply best practices, like error handling, building advanced functions, and moving comments to the top of the script. Specifically, see [PowerShell Practice and Style](https://poshcode.gitbook.io/powershell-practice-and-style/). I also practiced builing a simple module to define support functions, rather than distinct scripts(`UserSupport.psm1`). 
-    * In our active pandemic state, we had employees who were remote the entire week and completely dependant on VPN. The VPN itself uses the Active Directory account, so if a password is locked or expired, the VPN is locked as well. Our help desk identified a problem with attempting to reset a password when the employee depends on VPN. With approval of our director, our process for expired passwords was to extend the time out and ask the employee to reset it next time they are in the office. This is a utility script that would bring up a list of employees who are currently locked out or expired. When an employee calls in for assistance, the specialist would select the employee from the list and select "OK." That employee would immediately be unlocked, or timeout extended depending on which scenario applies. 
