@@ -1,0 +1,86 @@
+{
+    "Environments" : [
+        {
+            "Name"                  :   "Preproduction"
+            , "Domain"              :   "preproduction.softwarehost.ninja"
+            , "ReferenceIdcode"   :   "qapolaris"
+        }
+        , {
+            "Name"                  :   "NA"
+            , "Domain"              :   "na.oursoftware.ninja"
+            , "ReferenceIdcode"   :   "alac"
+        }
+        , {
+            "Name"                  :   "NA2"
+            , "Domain"              :   "na2.oursoftware.ninja"
+            , "ReferenceIdcode"   :   "allen"
+        }
+        , {
+            "Name"                  :   "NA3"
+            , "Domain"              :   "na3.oursoftware.ninja"
+            , "ReferenceIdcode"   :   "ascpl"
+        }
+        , {
+            "Name"                  :   "NA4"
+            , "Domain"              :   "na4.oursoftware.ninja"
+            , "ReferenceIdcode"   :   "acpl"
+        }
+        , {
+            "Name"                  :   "AP"
+            , "Domain"              :   "ap.oursoftware.ninja"
+            , "ReferenceIdcode"   :   "elgar"
+        }
+        , {
+            "Name"                  :   "CA"
+            , "Domain"              :   "ca.oursoftware.ninja"
+            , "ReferenceIdcode"   :   "cambp"
+        }
+        , {
+            "Name"                  :   "EU"
+            , "Domain"              :   "eu.oursoftware.ninja"
+            , "ReferenceIdcode"   :   "amer"
+        }
+        , {
+            "Name"                  :   "SG-Production"
+            , "Domain"              :   "sg-prod.oursoftware.ninja"
+            , "ReferenceIdcode"   :   "nlb"
+        }
+        , {
+            "Name"                  :   "SG"
+            , "Domain"              :   "sg.oursoftware.ninja"
+            , "ReferenceIdcode"   :   "nlbuat"
+        }
+    ]
+    , "Defaults" : {
+        "Version" : 1
+        , "DomainTemplate"  :   "IdCODE.DOMAIN"
+        , "Accept"                  :   "*/*"
+    }
+    , "Auth" : {
+        "UriTemplate"   :   "https://auth.DOMAIN/auth/realms/IdCODE/protocol/openid-connect/token"
+        , "Method"      :   "Post"
+        , "GrantType"   :   "password"
+        , "ClientId"    :   "convergence"
+        , "ResultField" :   "access_token"
+    }
+    , "CustomerList" : {
+        "UriTemplate"               :   "https://DOMAIN/api/customer/customers"
+        , "Method"                  :   "Get"
+        , "Page"                    :   1
+        , "Size"                    :   1024
+        , "Sort"                    :   "IdCode,asc"
+    }
+    , "FindCustomer" : {
+        "UriTemplate"   :   "https://DOMAIN/api/customer/customers/search-by-Idcode"
+        , "Method"      :   "Get"
+    }
+    , "IPList" : {
+        "UriTemplate"   : "https://DOMAIN/api/customer/customers/CUSTID/allowed-ips"
+        , "Method"      :   "Get"
+    }
+    , "SetIPList" : {
+        "UriTemplate"   : "https://DOMAIN/api/customer/customers/CUSTID/allowed-ips"
+        , "Method"      :   "Put"
+        , "ContentType" :  "application/json"
+    }
+} 

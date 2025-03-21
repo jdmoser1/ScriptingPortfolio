@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Event handler script for restarting Tomcat on FS01
+# Event handler script for restarting Tomcat on SampleServer
 #
 # We have 5 retry checks before bailing out. Try to restart on the 2nd check. 
 

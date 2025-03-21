@@ -1,7 +1,7 @@
 ﻿<#
     This procedure script handles these tasks:
         Check for near-term password expirations for Active Directory 
-        and Fourth Shift Users. Also email the user if email is available.
+        and 3P Software Users. Also email the user if email is available.
     This script requires the SQL and AD modules on the local server
 #>
 Param(
@@ -23,7 +23,7 @@ Try {
     Start-Transcript -Path $LogFile -IncludeInvocationHeader
     # Distinguished names in AD to search for users
     $ADOU = "OU=Sample,DC=Sample,DC=ninja"
-    # Database server for Fourth Shift
+    # Database server for 3P Software
     $DBServer = 'SampleServer'
     $Database = 'Sample0'  
     # Message settings
@@ -36,7 +36,7 @@ Try {
 
     # Number of days that passwords are set to expire in AD
     $ADExpiration = (Get-ADDefaultDomainPasswordPolicy).MaxPasswordAge.TotalDays
-    # days that passwords expire in Fourth Shift
+    # days that passwords expire in 3P Software
     $FSExpiration = (Invoke-Sqlcmd -ServerInstance $DBServer -Database $Database -Query "Select MaximumExpirationDays FROM FS_PasswordConfig" -ConnectionTimeout 240).MaximumExpirationDays
 
     ## Run commands
@@ -97,11 +97,11 @@ Try {
             $FSUserName = $_.UserName.Trim()
             $FSUserDays = $FSExpiration - [System.Math]::Round((((Get-Date) - (Get-Date -Date $_.LastMaintainedDate)).TotalDays),0)
             Switch ($FSUserDays){
-                10  { $FSUserMessage = "There are 10 days remaining until your Fourth Shift password expires." }
-                5   { $FSUserMessage = "There are 5 days remaining until your Fourth Shift password expires." }
-                3   { $FSUserMessage = "There are 3 days remaining until your Fourth Shift password expires." }
-                2   { $FSUserMessage = "There are 2 days remaining until your Fourth Shift password expires." }
-                1   { $FSUserMessage = "Your Fourth Shift account will expire today if you do not change your password soon." }
+                10  { $FSUserMessage = "There are 10 days remaining until your 3P Software password expires." }
+                5   { $FSUserMessage = "There are 5 days remaining until your 3P Software password expires." }
+                3   { $FSUserMessage = "There are 3 days remaining until your 3P Software password expires." }
+                2   { $FSUserMessage = "There are 2 days remaining until your 3P Software password expires." }
+                1   { $FSUserMessage = "Your 3P Software account will expire today if you do not change your password soon." }
                 0   { 
                         $FSUserMessage = $False
                         $UserException += $FSUserName + " has an expired FS password ($FSUserDays days) <br\>`n" 
@@ -131,7 +131,7 @@ Try {
                 # Enable for testing
                 Write-Output -InputObject ( $_.UserName.Trim() + ' - ' + $FSUserMessage )
                 If (-not $Logonly) {
-                    $FSMessageSubject = "Notice: Your Fourth Shift password will expire soon."
+                    $FSMessageSubject = "Notice: Your 3P Software password will expire soon."
                     Send-MailMessage -SmtpServer $SMTPServer  -To $FSUserEmail -From $MessageSender -Subject $FSMessageSubject -Body $FSMessageBody -BodyAsHtml
                 }
             }

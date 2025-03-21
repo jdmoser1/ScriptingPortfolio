@@ -42,7 +42,7 @@ Try {
     $DefaultArchive = "D:\Sample3"
     If (-not $AOIRoot) {
         Write-Warning -Message 'This tool cannot split archives in interactive mode'
-        Write-Output -InputObject ("Root path for VIT AOI images [$DefaultRoot]")
+        Write-Output -InputObject ("Root path for TP AOI images [$DefaultRoot]")
         $InPath = Read-Host
         If ($InPath) { $AOIRoot = $InPath } Else { $AOIRoot = $DefaultRoot }
     }
@@ -53,11 +53,11 @@ Try {
     }
     # Omron Root
     $OmronRoot = Join-Path -Path $AOIRoot -ChildPath 'Omron'
-    # VIT Root
-    $VITAOIRoot = Join-Path -Path $AOIRoot -ChildPath 'VITAOI'
+    # TP Root
+    $TPAOIRoot = Join-Path -Path $AOIRoot -ChildPath 'TPAOI'
     # Review path
-    $VITReviewPath = Join-Path -Path $VITAOIRoot -ChildPath 'Orphaned'
-    # VIT folder name check
+    $TPReviewPath = Join-Path -Path $TPAOIRoot -ChildPath 'Orphaned'
+    # TP folder name check
     $ExpectedMEString = 'Sample*'
     # Counter
     $J = 0 
@@ -66,8 +66,8 @@ Try {
 
     ## Run commands
     # If needed, create archive folder
-    #If (-not (Test-Path -Path $VITAOIArchive)) {
-    #    New-Item -Path $VITAOIArchive -ItemType Directory -Force | Out-Null
+    #If (-not (Test-Path -Path $TPAOIArchive)) {
+    #    New-Item -Path $TPAOIArchive -ItemType Directory -Force | Out-Null
     #}
 
     # For Omron, move the files to a subfolder based on $OmronSubPath
@@ -84,8 +84,8 @@ Try {
         $Error.Clear()
     }
 
-    # For VITAOI, Loop through each "Sample" folder
-    Get-ChildItem -Path $VITAOIRoot -Directory | Where-Object -Property FullName -Value $ExpectedMEString -Match | ForEach-Object -Process {
+    # For TPAOI, Loop through each "Sample" folder
+    Get-ChildItem -Path $TPAOIRoot -Directory | Where-Object -Property FullName -Value $ExpectedMEString -Match | ForEach-Object -Process {
         # Terminate at JMax
         #If ($J -ge $JMax) {
         #    Return
@@ -96,7 +96,7 @@ Try {
         Get-ChildItem -Path $_.FullName | ForEach-Object -Process {
             If (-not ($_.Basename.StartsWith('93'))) {
                 Write-Output -InputObject ((Get-Date).ToString() + " Run $J " + $_.FullName + ' is non-standard. Skipping.')
-                #Move-Item -Path $_.FullName -Destination $VITReviewPath -Force
+                #Move-Item -Path $_.FullName -Destination $TPReviewPath -Force
             } Elseif (Get-ChildItem -Path $_.FullName -Filter "*.jpeg" -Recurse | Select-Object -First 1) {
                 # Current subfolder information
                 $CurrentPathName = $_.BaseName
@@ -109,7 +109,7 @@ Try {
                     #Join-Path -Path (Join-Path -Path $SplitArchive -ChildPath $CurrentWeekID) -ChildPath $CurrentPathName
                 } Else {
                     $CurrentArchive = ($AOIArchive, $CurrentMEName, $CurrentWeekID, $CurrentPathName) -join '\' 
-                    #Join-Path -Path (Join-Path -Path $VITAOIArchive -ChildPath $CurrentWeekID) -ChildPath $CurrentPathName
+                    #Join-Path -Path (Join-Path -Path $TPAOIArchive -ChildPath $CurrentWeekID) -ChildPath $CurrentPathName
                 }
                 # Enable for diagnostics
                 Write-Output -InputObject ((Get-Date -Format HH:mm:ss) + " Run $J - Moving JPEGs from: `n " + $_.FullName + " `n to $CurrentArchive")

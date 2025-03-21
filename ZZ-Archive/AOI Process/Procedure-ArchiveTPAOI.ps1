@@ -1,6 +1,6 @@
 ﻿<#
     This procedure script handles these tasks for SampleServer:
-        1. Create JPEG copies of Omron bitmap files 
+        1. Create JPEG copies of Third Party bitmap files 
         2. Add the JPEGs to an archive based on the week of the year
         3. Delete files which "Expired" 
         4. Delete empty folders in the AOI folder structure
@@ -22,7 +22,7 @@ Try {
     Start-Transcript -Path $LogFile -IncludeInvocationHeader
     
     # Stored time of last (successful) procedure run
-    $AOILastFile =  "PowerUtils:\Store\OmronAOILast.xml"
+    $AOILastFile =  "PowerUtils:\Store\TPAOILast.xml"
     $ArchiveAOILast = Import-CliXML -Path $AOILastFile
     Write-Output -InputObject "Last Run Time: $ArchiveAOILast" 
     # AOI Image Folder Paths

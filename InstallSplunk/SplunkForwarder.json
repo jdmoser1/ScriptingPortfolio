@@ -1,0 +1,40 @@
+{
+    "MSIPrefix"             :   "splunkforwarder"
+    , "LocalFilePaths"      :   {
+        "inputs" : "C:\\Program Files\\SplunkUniversalForwarder\\etc\\system\\local\\inputs.conf"
+        , "outputs" : "C:\\Program Files\\SplunkUniversalForwarder\\etc\\system\\local\\outputs.conf"
+    }
+    , "InstallOptions"      :   "AGREETOLICENSE=Yes GENRANDOMPASSWORD=1 LAUNCHSPLUNK=0 /passive"
+    , "DefaultSplunkServer" :   "splunkserver.ninja.local"
+    , "DefaultPort"         :   9997
+    , "SplunkSites"         :   [
+        {
+            "Name"              :   "OREGON-DC"
+            , "SplunkServer"    :   "splunk-awsore.ninja.local"
+        }
+        , {
+            "Name"              :   "OHIO-DC"
+            , "SplunkServer"    :   "splunk-awsohi.ninja.local"
+        }
+        , {
+            "Name"              :   "VIRGINIA-DC"
+            , "SplunkServer"    :   "splunk-awsvir.ninja.local"
+        }
+        , {
+            "Name"              :   "CANADA-DC"
+            , "SplunkServer"    :   "splunk-dccan.ninja.local"
+        }
+        , {
+            "Name"              :   "CHICAGO-DC"
+            , "SplunkServer"    :   "splunk-dcchi.ninja.local"
+        }
+        , {
+            "Name"              :   "SEATLE-DC"
+            , "SplunkServer"    :   "splunk-dcsea.ninja.local"
+        }
+        , {
+            "Name"              :   "SYDNEY-DC"
+            , "SplunkServer"    :   "splunk-dcsyd.ninja.local"
+        }
+    ]
+}
