@@ -1,0 +1,31 @@
+{
+    "Checklist" : [
+        {
+            "Name"      :   "LineCount"
+            , "Text"    :   "Get and output line count"
+        }     
+        ,        {
+            "Name"      :   "FileCount"
+            , "Text"    :   "Get and output file count"
+        }     
+        , {
+            "Name"      :   "Null"
+            , "Text"    :   "This entry for testing"
+        } 
+    ]
+    , "ChecklistColors" : [
+        "Cyan"
+        , "Red"
+        , "Green"
+    ]
+    , "TextFilter" : [
+        ".ps1"
+        , ".psm1"
+        , ".psd1"
+        , ".ps1xml"
+        , ".json"
+        , ".xml"
+        , ".txt"
+        , ".docx"
+    ]
+}
