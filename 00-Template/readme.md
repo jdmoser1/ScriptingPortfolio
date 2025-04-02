@@ -16,6 +16,8 @@ This `.json` contains variables that persist between PowerShell sessions. I avoi
 
 This is a script that is designed to complete a specific task, though most often I allow Parameters so we can vary how the task is completed. This is usually dependent on the module file. 
 
+For the purposes of having a demo, you can actually execute `TemplateProcedure.ps1` with the Path parameter. If you do, it will output the number of lines in each text file in the Path (Script Root by default), controlled by a "Filter" entry in the `.json`
+
 ## `TemplateFlat.ps1`
 
 This is a template for a standalone or "flat" script. I may use this template when there's no need for modularity, or the script only does exactly one task one specific way. 
