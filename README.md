@@ -8,6 +8,10 @@ Welcome to my portfolio! I am an Infrastructure Engineer looking to showcase som
 I reproduced scripts that are similar to scripts that ran in actual production environments. In order to exclude sentitive information, I generalized some segments, or marked them as "redacted". So for example, you may see a string in the format "C:\Sample\file.csv". If the string (folder path in this case) was changed to correctly represent something in the environment, the script would run correctly. You may also see \[REDACTED\] in other cases. 
 
 ## Specific Folder Notes
+
+### `Template`
+The current set of template files that I use at the start of each PowerShell project 
+
 ### `ConnectPartner`
 Custom script written to ease the process of connecting to Linux KVM host servers at our Partner datacenters. The list of servers come as a .csv file, which was datadumped regularly.
 
