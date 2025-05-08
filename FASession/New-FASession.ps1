@@ -22,7 +22,7 @@
             not all browser windows. In other tests, CTRL-C worked as expected.  
           * TestDomain must be a valid domain or IP address. In one test, an unresolvable domain name caused
             the test to stall. In other tests, an invalid domain caused the script to terminate immediately, as
-            expected. 
+            expected.  
 #>
 [CmdletBinding()]
 param (
