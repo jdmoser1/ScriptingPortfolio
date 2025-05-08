@@ -36,9 +36,14 @@ param (
     [Parameter(Position=2)][string]$TestDomain = 'router.teamviewer.com'
     , # Process name of the remote app to monitor. Must be the name as shown in Task Manager without the 
     # extention (.exe)
-    [Parameter(Position=3)][string]$ProcessSearchString = 'TeamViewer'
+    [Parameter(Position=3)][string]$ProcessSearchString = 'TeamViewer_Desktop'
     , # List of browser processes to terminate, also as listed in Task Manager without an extention
     [Parameter(Position=4)][string[]]$BrowserList = @('chrome','msedge','firefox','operah','safari')
+    , # Number of hours for script to run before completing
+    [Parameter(Position=5)][int]$RunTimeHrs = 23
+    , # If true, just check that the search process count is more than 0; default behavior is to check number of
+    # search process matches number of users
+    [Parameter(Position=6)][switch]$DontCheckProcessAgainstUser
 )
 
 
@@ -51,7 +56,7 @@ Write-Verbose -Message "`t 0.00 `t Start"
 function Get-FAProcessCount {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory,ValueFromPipeline,Position=0)][string[]]$ProcessSearchString
+        [string]$ProcessSearchString
     )
     # begin {}
     # end {}
@@ -68,12 +73,43 @@ function Get-FAProcessCount {
     }
 }
 
+function Test-FAProcessCount {
+    [CmdletBinding()]
+    param (
+        [string]$ProcessSearchString
+        , [Parameter][switch]$DontCheckProcessAgainstUser
+
+    )
+    # begin {}
+    # end {}
+    process {
+        try {
+            $ProcessCount = Get-FAProcessCount -ProcessSearchString $ProcessSearchString
+            if (
+                ($DontCheckProcessAgainstUser -and ($ProcessCount -gt 0)) -or 
+                ($ProcessCount -ne (Get-CimInstance -ClassName Win32_LoggedOnUser|Measure-Object).Count)
+            ) {
+                $true
+                Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Tested $ProcessSearchString as true")
+            } else {
+                $false
+                Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Tested $ProcessSearchString as false")
+            }            
+        } catch {
+            Write-Error -ErrorRecord $PSItem
+            Write-Verbose -Message ('Error type: ' + $PSItem.Exception.GetType().FullName)
+            Write-Verbose -Message ('Trace: ' + $PSItem.ScriptStackTrace.Replace("`n","`n`t"))
+        }
+    }
+}
+
+
 function Test-FAConnection {
     [CmdletBinding()]
     param (
         [string]$TestDomain
-        ,[string]$ProcessSearchString
-        , [int]$InitialProcCount
+        #,[string]$ProcessSearchString
+        #, [int]$InitialProcCount
     )
     begin {
         $ErrorActionPreference = 'Stop'
@@ -81,11 +117,10 @@ function Test-FAConnection {
     # end {}
     process {
         try {
-            if (
-                (Test-NetConnection -ComputerName $TestDomain -Port 443).TcpTestSucceeded -and
-                ((Get-FAProcessCount $ProcessSearchString) -ge $InitialProcCount)
-            ) {
+            if ((Test-NetConnection -ComputerName $TestDomain -Port 443).TcpTestSucceeded) {
                 $true
+            } else {
+                $false
             }
             Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Tested for $TestDomain and $ProcessSearchString")
         } catch {
@@ -126,27 +161,54 @@ function Get-FABrowserProcesses {
 
 #region Procedure
 try {
-    $TargetProcess = Start-Process -FilePath $BrowserPath -ArgumentList $TargetUri -Passthru
-    $InitialProcCount = Get-FAProcessCount  $ProcessSearchString
     $i = 0
-    $ConnectionParameters = @{
-        TestDomain          =   $TestDomain
-        ProcessSearchString =   $ProcessSearchString
-        InitialProcCount    =   $InitialProcCount
-    }
-    while (Test-FAConnection @ConnectionParameters) {
-        $i++
-        Write-Host -ForegroundColor Cyan -Object (
-            "INFO: `t" +(Get-Date -Format HH:mm:ss) + " ($i) Connection Check Passed"
-        )
+    while ((Get-Date) -lt (Get-Date).AddHours($RunTimeHrs)) {
+        if ($TargetProcess.Id -and -not $TargetProcess.HasExited) {
+            $IsTargetActive = $true
+        } else {
+            $IsTargetActive = $false
+        }
+        $IsConnected = Test-FAConnection -TestDomain $TestDomain
+        $ProcessCountParameters = @{
+            ProcessSearchString         =   $ProcessSearchString 
+            DontCheckProcessAgainstUser =   $DontCheckProcessAgainstUser
+        }
+        $IsProcessCount = Test-FAProcessCount @ProcessCountParameters
+        if ($IsConnected -and $IsProcessCount -and -not $IsTargetActive) {
+            $TargetProcess = Start-Process -FilePath $BrowserPath -ArgumentList $TargetUri -Passthru
+            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " ($i) Starting $BrowserPath")
+        } elseif ($IsTargetActive -and ((-not $IsConnected) -or (-not $IsProcessCount))) {
+            $TargetProcess | Stop-Process -Force
+            $BrowserList | Get-FABrowserProcesses | Stop-Process -Force
+            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " ($i) terminating all browsers")
+        } else {
+            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " ($i) Tests are valid, no change")
+        }
+        # Get-FAProcessCount -ProcessSearchString $ProcessSearchString
         Start-Sleep -Seconds 2
+        $i++
     }
+    #$InitialProcCount = Get-FAProcessCount  $ProcessSearchString
+    # $i = 0
+    # $ConnectionParameters = @{
+    #     TestDomain          =   $TestDomain
+    #     ProcessSearchString =   $ProcessSearchString
+    #     InitialProcCount    =   $InitialProcCount
+    # }
+    # while (Test-FAConnection @ConnectionParameters) {
+    #     $i++
+    #     Write-Host -ForegroundColor Cyan -Object (
+    #         "INFO: `t" +(Get-Date -Format HH:mm:ss) + " ($i) Connection Check Passed"
+    #     )
+    # 
+
+    # }
 } catch {
     Write-Error -ErrorRecord $PSItem
     Write-Verbose -Message ('Error type: ' + $PSItem.Exception.GetType().FullName)
     Write-Verbose -Message ('Trace: ' + $PSItem.ScriptStackTrace.Replace("`n","`n`t"))
 } finally {
-    Stop-Process $TargetProcess -Force -ErrorAction SilentlyContinue
+    $TargetProcess | Stop-Process -Force
     $BrowserList | Get-FABrowserProcesses | Stop-Process -Force 
     Write-Host -ForegroundColor Cyan -Object "INFO: `tAll browser sessions terminated."
     Read-Host -Prompt 'Press [enter] to exit.'
