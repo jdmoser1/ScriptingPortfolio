@@ -14,7 +14,7 @@
         .\New-FASession.ps1
         Start browser session with all defaults, including test targets.
     .EXAMPLE
-        .\New-FASession.ps1 -TargetUri https://example.com -TestDomain example.com -ProcessSearchString TeamViewer
+        .\New-FASession.ps1 -BrowserArguments https://example.com -TestDomain example.com -ProcessSearchString TeamViewer
         Start browser session with example.com, and testing connectivity to example.com and TeamViewer
     .NOTES
         Known issues
@@ -31,7 +31,7 @@ param (
         Join-Path -Path $env:ProgramFiles -ChildPath "Google\Chrome\Application\chrome.exe"
     )
     , # Full URL to open in the browser
-    [Parameter(Position=1)][string]$TargetUri = 'https://www.facebook.com/business'
+    [Parameter(Position=1)][string]$BrowserArguments = '--profile-directory="Profile 1" https://www.facebook.com/business'
     , # FQDN (DNS name) of server to test against. The test uses HTTPS to test
     [Parameter(Position=2)][string]$TestDomain = 'router.teamviewer.com'
     , # Process name of the remote app to monitor. Must be the name as shown in Task Manager without the 
@@ -56,7 +56,7 @@ Write-Verbose -Message "`t 0.00 `t Start"
 function Get-FAProcessCount {
     [CmdletBinding()]
     param (
-        [string]$ProcessSearchString
+        [Parameter()][string]$ProcessSearchString
     )
     # begin {}
     # end {}
@@ -76,8 +76,8 @@ function Get-FAProcessCount {
 function Test-FAProcessCount {
     [CmdletBinding()]
     param (
-        [string]$ProcessSearchString
-        , [Parameter][switch]$DontCheckProcessAgainstUser
+        [Parameter()][string]$ProcessSearchString
+        , [Parameter()][switch]$DontCheckProcessAgainstUser
 
     )
     # begin {}
@@ -87,7 +87,7 @@ function Test-FAProcessCount {
             $ProcessCount = Get-FAProcessCount -ProcessSearchString $ProcessSearchString
             if (
                 ($DontCheckProcessAgainstUser -and ($ProcessCount -gt 0)) -or 
-                ($ProcessCount -ne (Get-CimInstance -ClassName Win32_LoggedOnUser|Measure-Object).Count)
+                ($ProcessCount -eq (Get-CimInstance -ClassName Win32_LoggedOnUser|Measure-Object).Count)
             ) {
                 $true
                 Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Tested $ProcessSearchString as true")
@@ -107,7 +107,7 @@ function Test-FAProcessCount {
 function Test-FAConnection {
     [CmdletBinding()]
     param (
-        [string]$TestDomain
+        [Parameter()][string]$TestDomain
         #,[string]$ProcessSearchString
         #, [int]$InitialProcCount
     )
@@ -163,19 +163,29 @@ function Get-FABrowserProcesses {
 try {
     $i = 0
     while ((Get-Date) -lt (Get-Date).AddHours($RunTimeHrs)) {
+        # Write-Host 'proc count'
+        # Get-FAProcessCount -ProcessSearchString $ProcessSearchString
+        # Write-Host 'user count'
+        # (Get-CimInstance -ClassName Win32_LoggedOnUser|Measure-Object).Count
         if ($TargetProcess.Id -and -not $TargetProcess.HasExited) {
             $IsTargetActive = $true
         } else {
             $IsTargetActive = $false
         }
+        # Write-Host 'IsTargetActive'
+        # ($IsTargetActive)
         $IsConnected = Test-FAConnection -TestDomain $TestDomain
+        # Write-Host 'IsConnected'
+        # ($IsConnected)
         $ProcessCountParameters = @{
             ProcessSearchString         =   $ProcessSearchString 
             DontCheckProcessAgainstUser =   $DontCheckProcessAgainstUser
         }
         $IsProcessCount = Test-FAProcessCount @ProcessCountParameters
+        # Write-Host 'IsProcessCount'
+        # ($IsProcessCount)
         if ($IsConnected -and $IsProcessCount -and -not $IsTargetActive) {
-            $TargetProcess = Start-Process -FilePath $BrowserPath -ArgumentList $TargetUri -Passthru
+            $TargetProcess = Start-Process -FilePath $BrowserPath -ArgumentList $BrowserArguments -Passthru
             Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " ($i) Starting $BrowserPath")
         } elseif ($IsTargetActive -and ((-not $IsConnected) -or (-not $IsProcessCount))) {
             $TargetProcess | Stop-Process -Force
@@ -210,8 +220,8 @@ try {
 } finally {
     $TargetProcess | Stop-Process -Force
     $BrowserList | Get-FABrowserProcesses | Stop-Process -Force 
-    Write-Host -ForegroundColor Cyan -Object "INFO: `tAll browser sessions terminated."
-    Read-Host -Prompt 'Press [enter] to exit.'
+    #Write-Host -ForegroundColor Cyan -Object "INFO: `tAll browser sessions terminated."
+    #Read-Host -Prompt 'Press [enter] to exit.'
     Write-Verbose -Message ('Task Complete. Time: ' + $Timer.Elapsed.TotalSeconds)
     $Timer.Stop()
 }
