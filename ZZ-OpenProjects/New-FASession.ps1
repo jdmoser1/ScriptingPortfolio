@@ -27,11 +27,17 @@
 [CmdletBinding()]
 param (
     # Full path to desired browser
-    [Parameter(position=0)][string]$BrowserPath = (
-        Join-Path -Path $env:ProgramFiles -ChildPath "Google\Chrome\Application\chrome.exe"
+    # [Parameter(position=0)][string]$BrowserPath = (
+    #     Join-Path -Path $env:ProgramFiles -ChildPath "Google\Chrome\Application\chrome.exe"
+    # )
+    # , # Full URL to open in the browser
+    # [Parameter(Position=1)][string]$BrowserArguments = '--profile-directory="Profile 1" https://www.facebook.com/business'
+    # ,
+    # Definitions of browsers you want open, including command line options
+    [Parameter(Position=2)][Arraylist]$FABrowsers = @(
+        [PSCustomObject]@{FilePath='firefox.exe';ArgumentList='-P "Profile 1" -no-remote'}
+        [PSCustomObject]@{FilePath='edge.exe';ArgumentList='--profile-directory="Profile 1"'}
     )
-    , # Full URL to open in the browser
-    [Parameter(Position=1)][string]$BrowserArguments = '--profile-directory="Profile 1" https://www.facebook.com/business'
     , # FQDN (DNS name) of server to test against. The test uses HTTPS to test
     [Parameter(Position=2)][string]$TestDomain = 'router.teamviewer.com'
     , # Process name of the remote app to monitor. Must be the name as shown in Task Manager without the 
@@ -50,6 +56,7 @@ param (
 #region Supporting Information
 $Timer = [system.diagnostics.stopwatch]::StartNew()
 Write-Verbose -Message "`t 0.00 `t Start"
+$ErrorActionPreference = 'Stop'
 #endregion Supporting Information
 
 #region Supporting Functions
@@ -64,7 +71,9 @@ function Get-FAProcessCount {
         try {
             Get-Process | Where-Object -Property Name -Like -Value "$ProcessSearchString*" | Measure-Object | 
                 Select-Object -ExpandProperty Count
-            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Counted $ProcessSearchString")
+            Write-Verbose -Message (
+                $Timer.Elapsed.Seconds + " Get-FAProcessCount Counted $ProcessSearchString"
+            )
         } catch {
             Write-Error -ErrorRecord $PSItem
             Write-Verbose -Message ('Error type: ' + $PSItem.Exception.GetType().FullName)
@@ -90,10 +99,14 @@ function Test-FAProcessCount {
                 ($ProcessCount -eq (Get-CimInstance -ClassName Win32_LoggedOnUser|Measure-Object).Count)
             ) {
                 $true
-                Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Tested $ProcessSearchString as true")
+                Write-Verbose -Message (
+                    $Timer.Elapsed.Seconds + " Test-FAProcessCount Tested $ProcessSearchString as true"
+                )
             } else {
                 $false
-                Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Tested $ProcessSearchString as false")
+                Write-Verbose -Message (
+                    $Timer.Elapsed.Seconds + " Test-FAProcessCount Tested $ProcessSearchString as false"
+                )
             }            
         } catch {
             Write-Error -ErrorRecord $PSItem
@@ -108,12 +121,8 @@ function Test-FAConnection {
     [CmdletBinding()]
     param (
         [Parameter()][string]$TestDomain
-        #,[string]$ProcessSearchString
-        #, [int]$InitialProcCount
     )
-    begin {
-        $ErrorActionPreference = 'Stop'
-    }
+    # begin {}
     # end {}
     process {
         try {
@@ -122,8 +131,37 @@ function Test-FAConnection {
             } else {
                 $false
             }
-            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Tested for $TestDomain and $ProcessSearchString")
+            Write-Verbose -Message (
+                $Timer.Elapsed.Seconds + " Test-FAConnection Tested for $TestDomain and $ProcessSearchString"
+            )
         } catch {
+            Write-Error -ErrorRecord $PSItem
+            Write-Verbose -Message ('Error type: ' + $PSItem.Exception.GetType().FullName)
+            Write-Verbose -Message ('Trace: ' + $PSItem.ScriptStackTrace.Replace("`n","`n`t"))
+        }
+    }
+}
+
+function Start-FABrowsers {
+    [CmdletBinding()]
+    param (
+        [Parameter(ValueFromPipeline,Position=0)][string[]]$InputObject
+    )
+    begin {
+        # $ErrorActionPreference = 'Stop'
+        $i = 0
+    }
+    end {
+        $true
+        Write-Verbose -Message ($Timer.Elapsed.Seconds + "Start-FABrowsers Objects evaluated: $i")
+    }    
+    process {
+        try {
+            Start-Process -FilePath $InputObject.FilePath -ArgumentList $InputObject.ArgumentList
+            Write-Verbose -Message ($Timer.Elapsed.Seconds + " Start-FABrowsers attempted to open")
+            $i++
+        }
+        catch {
             Write-Error -ErrorRecord $PSItem
             Write-Verbose -Message ('Error type: ' + $PSItem.Exception.GetType().FullName)
             Write-Verbose -Message ('Trace: ' + $PSItem.ScriptStackTrace.Replace("`n","`n`t"))
@@ -134,22 +172,23 @@ function Test-FAConnection {
 function Get-FABrowserProcesses {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory,ValueFromPipeline,Position=0)][string[]]$ProcessName
+        [Parameter(ValueFromPipeline,Position=0)][string[]]$ProcessName
     )
     begin {
-        $ErrorActionPreference = 'Stop'
         $i = 0
     }
     end {
-        Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Get-LineCount Objects evaluated: $i")
+        Write-Verbose -Message ($Timer.Elapsed.Seconds + " Get-FABrowserProcesses Objects evaluated: $i")
     }
     process {
         try {
             Get-Process $ProcessName
-            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " Listed processes for $ProcessName")
+            Write-Verbose -Message (
+                $Timer.Elapsed.Seconds + " Get-FABrowserProcesses Listed processes for $ProcessName"
+            )
             $i++
         } catch [Microsoft.PowerShell.Commands.ProcessCommandException] {
-            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " $ProcessName not found")
+            Write-Verbose -Message ($Timer.Elapsed.Seconds + " Get-FABrowserProcesses $ProcessName not found")
         } catch {
             Write-Error -ErrorRecord $PSItem
             Write-Verbose -Message ('Error type: ' + $PSItem.Exception.GetType().FullName)
@@ -163,56 +202,25 @@ function Get-FABrowserProcesses {
 try {
     $i = 0
     while ((Get-Date) -lt (Get-Date).AddHours($RunTimeHrs)) {
-        # Write-Host 'proc count'
-        # Get-FAProcessCount -ProcessSearchString $ProcessSearchString
-        # Write-Host 'user count'
-        # (Get-CimInstance -ClassName Win32_LoggedOnUser|Measure-Object).Count
-        if ($TargetProcess.Id -and -not $TargetProcess.HasExited) {
-            $IsTargetActive = $true
-        } else {
-            $IsTargetActive = $false
-        }
-        # Write-Host 'IsTargetActive'
-        # ($IsTargetActive)
         $IsConnected = Test-FAConnection -TestDomain $TestDomain
-        # Write-Host 'IsConnected'
-        # ($IsConnected)
         $ProcessCountParameters = @{
             ProcessSearchString         =   $ProcessSearchString 
             DontCheckProcessAgainstUser =   $DontCheckProcessAgainstUser
         }
         $IsProcessCount = Test-FAProcessCount @ProcessCountParameters
-        # Write-Host 'IsProcessCount'
-        # ($IsProcessCount)
-        if ($IsConnected -and $IsProcessCount -and -not $IsTargetActive) {
-            $TargetProcess = Start-Process -FilePath $BrowserPath -ArgumentList $BrowserArguments -Passthru
-            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " ($i) Starting $BrowserPath")
-        } elseif ($IsTargetActive -and ((-not $IsConnected) -or (-not $IsProcessCount))) {
-            $TargetProcess | Stop-Process -Force
+        if ($IsConnected -and $IsProcessCount -and -not $CurrentProcessState) {
+            $CurrentProcessState = $FABrowsers | Start-FABrowsers
+            Write-Verbose -Message ($Timer.Elapsed.Seconds + " ($i) Starting $BrowserPath")
+        } elseif ((-not $IsConnected) -or (-not $IsProcessCount)) {
             $BrowserList | Get-FABrowserProcesses | Stop-Process -Force
-            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " ($i) terminating all browsers")
+            $CurrentProcessState = $false
+            Write-Verbose -Message ($Timer.Elapsed.Seconds + " ($i) terminating all browsers")
         } else {
-            Write-Verbose -Message ("`t" + $Timer.Elapsed.Seconds + " ($i) Tests are valid, no change")
+            Write-Verbose -Message ($Timer.Elapsed.Seconds + " ($i) Tests are valid, no change")
         }
-        # Get-FAProcessCount -ProcessSearchString $ProcessSearchString
         Start-Sleep -Seconds 2
         $i++
     }
-    #$InitialProcCount = Get-FAProcessCount  $ProcessSearchString
-    # $i = 0
-    # $ConnectionParameters = @{
-    #     TestDomain          =   $TestDomain
-    #     ProcessSearchString =   $ProcessSearchString
-    #     InitialProcCount    =   $InitialProcCount
-    # }
-    # while (Test-FAConnection @ConnectionParameters) {
-    #     $i++
-    #     Write-Host -ForegroundColor Cyan -Object (
-    #         "INFO: `t" +(Get-Date -Format HH:mm:ss) + " ($i) Connection Check Passed"
-    #     )
-    # 
-
-    # }
 } catch {
     Write-Error -ErrorRecord $PSItem
     Write-Verbose -Message ('Error type: ' + $PSItem.Exception.GetType().FullName)
